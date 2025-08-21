@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Kazunov 1AI – AI First Underwriting</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Segoe+UI:400,500,700&display=swap">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f6f8fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Watermark bottom right */
+        .watermark-bottom-right {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 250px;
+            height: 180px;
+            background-image: url('/assets/watermark.svg');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 1;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Updated navigation bar with rounded corners and limited width */
+        #mainbar {
+            background: #0D1B4C;
+            color: #fff;
+            padding: 12px 24px;
+            height: auto;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            z-index: 10;
+            max-width: 1240px;
+            margin: 20px auto 0 auto;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #mainbar .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.15em;
+            font-weight: bold;
+        }
+
+        .app-container {
+            max-width: 1240px;
+            margin: 20px auto 0 auto;
+            display: flex;
+            gap: 40px;
+            position: relative;
+            z-index: 5;
+            align-items: flex-start;
+            padding: 0 20px;
+        }
+
+        .features-side {
+            background: linear-gradient(135deg, #0d1b4c 70%, #2a71d0 100%);
+            color: #fff;
+            border-radius: 18px;
+            min-width: 390px;
+            width: 430px;
+            padding: 36px 34px 30px 34px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 30px;
+            box-shadow: 0 0 18px 0 #3371f216;
+            flex-shrink: 0;
+        }
+
+        .features-side h2 {
+            font-size: 1.65em;
+            font-weight: 600;
+            line-height: 1.25;
+            margin-bottom: 18px;
+        }
+
+        .features-grid {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .features-grid span {
+            background: rgba(255, 255, 255, 0.09);
+            padding: 7px 11px;
+            border-radius: 7px;
+            font-size: 1em;
+            margin-right: 6px;
+            margin-bottom: 5px;
+            display: inline-block;
+            min-width: 220px;
+            transition: background 0.2s;
+        }
+
+        .features-grid span:hover {
+            background: #1162b5;
+        }
+
+        .login-side {
+            flex: 1;
+            min-width: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border-radius: 16px;
+            min-height: 600px;
+        }
+
+        .login-inner {
+            z-index: 1;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 42px 28px 30px 28px;
+        }
+
+        .welcome-section {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e5e9f2;
+            flex-shrink: 0;
+        }
+
+        .welcome-title {
+            color: #0F012A;
+            font-weight: 600;
+            font-size: 2em;
+            margin-bottom: 6px;
+        }
+
+        .login-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .login-block {
+            background: transparent;
+            border-radius: 12px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 2px solid #e5e9f2;
+            font-size: 0.95em;
+            background: #fff;
+            color: #333;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3371F2;
+        }
+
+        /* Updated login button to match the image style */
+        .login-btn {
+            background: #7BA7FF;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            width: 30%;
+            margin-top: 15px;
+            margin-left: 350px;
+            transition: background 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(123, 167, 255, 0.3);
+        }
+
+        .login-btn:hover:not(:disabled) {
+            background: #5A94FF;
+            box-shadow: 0 4px 8px rgba(123, 167, 255, 0.4);
+        }
+
+        .login-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .footerbar {
+            width: 100%;
+            max-width: 1230px;
+            margin: 52px auto 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1em;
+            color: #aaa;
+            padding: 20px 19px;
+            gap: 20px;
+            position: relative;
+            z-index: 5;
+        }
+
+        .footer-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-powered {
+            font-weight: 500;
+            color: #222;
+        }
+
+        .footer-right {
+            color: #777;
+            font-size: 0.95em;
+        }
+
+        /* Error/Success Messages */
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            display: none;
+            word-wrap: break-word;
+        }
+
+        .message.error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .message.success {
+            background: #efe;
+            color: #393;
+            border: 1px solid #cfc;
+        }
+
+        .message.info {
+            background: #eef;
+            color: #339;
+            border: 1px solid #ccf;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1280px) {
+            .app-container {
+                max-width: 95%;
+                padding: 0 15px;
+            }
+            
+            #mainbar {
+                max-width: 95%;
+                margin: 20px auto 0 auto;
+            }
+        }
+
+        @media (max-width: 1020px) {
+            .app-container {
+                flex-direction: column;
+                gap: 18px;
+                padding: 0 15px;
+            }
+
+            #mainbar {
+                margin: 15px auto 0 auto;
+                padding: 12px 20px;
+            }
+
+            .features-side {
+                width: 100%;
+                min-width: 0;
+                max-width: none;
+            }
+
+            .login-side {
+                width: 100%;
+                min-width: 0;
+                max-width: none;
+                min-height: auto;
+            }
+
+            .login-inner {
+                height: auto;
+                padding: 30px 20px;
+            }
+
+            .footerbar {
+                flex-direction: column;
+                gap: 10px;
+                padding: 20px 15px;
+            }
+
+            .watermark-bottom-right {
+                width: 180px;
+                height: 120px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #mainbar {
+                padding: 12px 15px;
+                margin: 15px 15px 0 15px;
+                border-radius: 8px;
+            }
+
+            .app-container {
+                margin-top: 20px;
+                padding: 0 12px;
+            }
+
+            .features-side,
+            .login-side {
+                padding: 0;
+            }
+
+            .login-inner {
+                padding: 20px 16px;
+            }
+
+            .welcome-title {
+                font-size: 1.2em;
+            }
+
+            .login-block {
+                padding: 30px 20px;
+            }
+
+            .watermark-bottom-right {
+                width: 150px;
+                height: 100px;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #mainbar .left {
+                font-size: 1em;
+            }
+
+            #mainbar {
+                margin: 10px 10px 0 10px;
+            }
+
+            .features-side {
+                padding: 24px 20px;
+            }
+
+            .features-side h2 {
+                font-size: 1.4em;
+            }
+
+            .features-grid span {
+                min-width: 180px;
+                font-size: 0.9em;
+            }
+
+            .login-inner {
+                padding: 16px 12px;
+            }
+
+            .login-block {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Watermark positioned in right bottom -->
+    <div class="watermark-bottom-right"></div>
+
+    <nav id="mainbar">
+        <div class="left">
+            <img src="/assets/logo.svg" alt="Kazunov1AI" height="24" />
+            Kazunov1AI
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <aside>
+            <img src="/assets/Hero.png" alt="Features Section"
+                style="width:100%;max-width:570px;display:block;margin:-13px;">
+        </aside>
+
+        <section class="login-side">
+            <div class="login-inner">
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <div class="welcome-title">Welcome to Kazunov 1AI</div>
+                </div>
+
+                <div class="login-section">
+                    <div class="login-block">
+                        <!-- Message display -->
+                        <div class="message" id="messageBox"></div>
+
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label for="email">Enter Email ID</label>
+                                <input type="email" id="email" class="form-input" required placeholder="">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Enter Password</label>
+                                <input type="password" id="password" class="form-input" required placeholder="">
+                            </div>
+
+                            <button type="submit" class="login-btn" id="loginBtn">
+                                Login
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footerbar">
+        <div class="footer-left">
+            <span class="footer-powered">Powered by</span>
+            <img src="/assets/company logo.svg" alt="Footer Logo" />
+        </div>
+        <div class="footer-right">
+            <span>Trusted by Securities. All rights reserved</span>
+        </div>
+    </footer>
+
+    <script>
+        // Elements
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const messageBox = document.getElementById('messageBox');
+
+        // Show message helper function
+        function showMessage(message, type = 'info') {
+            messageBox.textContent = message;
+            messageBox.className = `message ${type} show`;
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, 5000);
+        }
+
+        // Login form submit handler
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                showMessage('Please enter both email and password.', 'error');
+                return;
+            }
+
+            loginBtn.textContent = 'Logging In...';
+            loginBtn.disabled = true;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showMessage('Login successful! Redirecting...', 'success');
+                    
+                    // Redirect to dashboard or upload page
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+                } else {
+                    const errorData = await response.json();
+                    showMessage(errorData.message || 'Invalid email or password.', 'error');
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('Network error. Please try again.', 'error');
+            } finally {
+                loginBtn.textContent = 'Login';
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Auto-focus email field
+        emailInput.focus();
+
+        // Enter key handling for better UX
+        emailInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                passwordInput.focus();
+            }
+        });
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+
+</html>
