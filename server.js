@@ -232,7 +232,7 @@ async function handleDiseasePrediction(req, res) {
         }
 
         // This is the CORRECT, local address of our Python AI server
-        const pythonApiEndpoint = 'http://13.202.6.228:5050/predict'; 
+        const pythonApiEndpoint = 'http://205.147.102.131:5050/predict'; 
 
         console.log(`Forwarding Disease prediction request to: ${pythonApiEndpoint}`);
 
