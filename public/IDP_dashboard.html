@@ -603,20 +603,6 @@
             white-space: nowrap;
         }
 
-        #RiskLensBtn
-        {
-            background: #3371F2;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            padding: 8px 16px;
-            font-size: 0.95em;
-            transition: background-color 0.2s ease;
-            white-space: nowrap;
-        }
-
         #flipToResultBtn:hover:not(:disabled) {
             background-color: #1e59c4;
         }
@@ -625,8 +611,6 @@
             background-color: #ccc;
             cursor: not-allowed;
         }
-
-        
 
         #flipToUploadBtn {
             position: absolute;
@@ -829,6 +813,61 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+        }
+
+        /* Updated Tab navigation styles for attractive design */
+        .tab-nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            color: #333;
+            background: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: linear-gradient(135deg, #e6f0ff, #d0e2ff);
+            color: #1e59c4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #3371F2, #2a71d0);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(51, 113, 242, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(51, 113, 242, 0.3);
         }
 
         /* Responsive styles for nav bar */
@@ -1093,6 +1132,16 @@
             .preview-modal-content::after {
                 display: none;
             }
+
+            .tab-nav {
+                padding: 6px;
+                gap: 8px;
+            }
+
+            .tab-btn {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1157,6 +1206,17 @@
             .preview-modal-body {
                 margin-top: 25px;
                 height: calc(100% - 25px);
+            }
+
+            .tab-nav {
+                flex-direction: column;
+                gap: 6px;
+                padding: 4px;
+            }
+
+            .tab-btn {
+                padding: 8px 12px;
+                font-size: 0.85em;
             }
         }
 
@@ -1253,97 +1313,100 @@
                         <div class="welcome-title">Welcome to Kazunov 1AI</div>
                     </div>
 
-                    <div class="upload-block-flip-container" id="flipContainer" aria-live="polite" aria-atomic="true">
-                        <div class="upload-block-flip-inner">
-                            <!-- Front side - Upload Block -->
-                            <div class="upload-block upload-block-front">
-                                <div class="upload-header-row">
-                                    <div class="upload-header-content">
-                                        <div class="iconbox">
-                                            <img src="/assets/form-svgrepo.svg" width="22" alt="PDF icon">
-                                        </div>
-                                        <div class="upload-header-text">
-                                            <h2>Upload Document</h2>
-                                            <p>Choose document type and upload your file</p>
+                    <!-- Tab Navigation -->
+                    <div class="tab-nav">
+                        <button class="tab-btn active" data-tab="idp">IDP</button>
+                        <button class="tab-btn" data-tab="risk-lens">Risk Lens</button>
+                    </div>
+
+                    <div class="tab-content" id="idp-tab">
+                        <div class="upload-block-flip-container" id="flipContainer" aria-live="polite" aria-atomic="true">
+                            <div class="upload-block-flip-inner">
+                                <!-- Front side - Upload Block -->
+                                <div class="upload-block upload-block-front">
+                                    <div class="upload-header-row">
+                                        <div class="upload-header-content">
+                                            <div class="iconbox">
+                                                <img src="/assets/form-svgrepo.svg" width="22" alt="PDF icon">
+                                            </div>
+                                            <div class="upload-header-text">
+                                                <h2>Upload Document</h2>
+                                                <p>Choose document type and upload your file</p>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <!-- Message display -->
+                                    <div class="message" id="messageBox"></div>
+
+                                    <form id="uploadForm">
+                                        <div class="doc-type-section">
+                                            <label for="docType">Select Document Type:</label>
+                                            <select id="docType" class="doc-type-select" required>
+                                                <option value="">Choose document type...</option>
+                                                <option value="/upload/pdf/proposal_form">Proposal Form</option>
+                                                <option value="/upload/prescription/pdf">Prescription</option>
+                                                <option value="/upload/documents/pdf">Verification Document</option>
+                                                <option value="/upload/medical/pdf">Medical Report</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="dropzone" id="dropzone">
+                                            <div class="gradientbox">
+                                                <img src="/assets/upload-icon.svg" width="16" />
+                                            </div>
+                                            <p>Click to upload or drag and drop</p>
+                                        </div>
+                                        <input type="file" id="fileInput" accept=".pdf,image/*" style="display:none" required>
+
+                                        <div class="upload-btn-container">
+                                            <button type="submit" class="upload-btn" id="uploadBtn">
+                                                Process Document
+                                            </button>
+
+                                            <!-- Preview button on front side -->
+                                            <button type="button" class="preview-btn preview-btn-front" id="previewBtnFront"
+                                                title="Preview Selected File" disabled aria-disabled="true">
+                                                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                                                    <path
+                                                        d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
+                                                </svg>
+                                            </button>
+
+                                            <!-- View Result button -->
+                                            <button type="button" id="flipToResultBtn" disabled title="View Result">
+                                                View Result
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <div class="upload-note">Maximum File Size: 50 MB | Supported Formats: PDF, Images (JPG,
+                                        PNG,
+                                        GIF,
+                                        BMP, WebP)</div>
                                 </div>
 
-                                <!-- Message display -->
-                                <div class="message" id="messageBox"></div>
+                                <!-- Back side - Output Section -->
+                                <div class="upload-block upload-block-back" aria-live="polite" aria-atomic="true">
+                                    <!-- Button to flip back to upload side -->
+                                    <button type="button" id="flipToUploadBtn" title="Back to Upload">
+                                        Back
+                                    </button>
 
-                                <form id="uploadForm">
-                                    <div class="doc-type-section">
-                                        <label for="docType">Select Document Type:</label>
-                                        <select id="docType" class="doc-type-select" required>
-                                            <option value="">Choose document type...</option>
-                                            <option value="/upload/pdf/proposal_form">Proposal Form</option>
-                                            <option value="/upload/prescription/pdf">Prescription</option>
-                                            <option value="/upload/documents/pdf">Verification Document</option>
-                                            <option value="/upload/medical/pdf">Medical Report</option>
-                                        </select>
+                                    <!-- Preview button on back side top right -->
+                                    <button type="button" class="preview-btn preview-btn-back" id="previewBtnBack"
+                                        title="Preview Uploaded File" aria-label="Preview Uploaded File" disabled
+                                        aria-disabled="true">
+                                        <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                                            <path
+                                                d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
+                                        </svg>
+                                    </button>
+
+                                    <div class="output-header">Processing Results</div>
+                                    <div class="output-content">
+                                        <div class="json-output" id="jsonOutput"></div>
                                     </div>
-
-                                    <div class="dropzone" id="dropzone">
-                                        <div class="gradientbox">
-                                            <img src="/assets/upload-icon.svg" width="16" />
-                                        </div>
-                                        <p>Click to upload or drag and drop</p>
-                                    </div>
-                                    <input type="file" id="fileInput" accept=".pdf,image/*" style="display:none" required>
-
-                                    <div class="upload-btn-container">
-                                        <button type="submit" class="upload-btn" id="uploadBtn">
-                                            Process Document
-                                        </button>
-
-                                        <!-- Preview button on front side -->
-                                        <button type="button" class="preview-btn preview-btn-front" id="previewBtnFront"
-                                            title="Preview Selected File" disabled aria-disabled="true">
-                                            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-                                                <path
-                                                    d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
-                                            </svg>
-                                        </button>
-
-                                        <!-- View Result button -->
-                                        <button type="button" id="flipToResultBtn" disabled title="View Result">
-                                            View Result
-                                        </button>
-
-                                        <!-- Risk lens button -->
-                                        <button type="button" id="RiskLensBtn">
-                                            Risk Lens
-                                        </button>
-                                    </div>
-                                </form>
-
-                                <div class="upload-note">Maximum File Size: 50 MB | Supported Formats: PDF, Images (JPG,
-                                    PNG,
-                                    GIF,
-                                    BMP, WebP)</div>
-                            </div>
-
-                            <!-- Back side - Output Section -->
-                            <div class="upload-block upload-block-back" aria-live="polite" aria-atomic="true">
-                                <!-- Button to flip back to upload side -->
-                                <button type="button" id="flipToUploadBtn" title="Back to Upload">
-                                    Back
-                                </button>
-
-                                <!-- Preview button on back side top right -->
-                                <button type="button" class="preview-btn preview-btn-back" id="previewBtnBack"
-                                    title="Preview Uploaded File" aria-label="Preview Uploaded File" disabled
-                                    aria-disabled="true">
-                                    <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-                                        <path
-                                            d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
-                                    </svg>
-                                </button>
-
-                                <div class="output-header">Processing Results</div>
-                                <div class="output-content">
-                                    <div class="json-output" id="jsonOutput"></div>
                                 </div>
                             </div>
                         </div>
@@ -2053,15 +2116,18 @@
             }
         });
 
-        //Transition between IDP and Risk lens
+        // Tab navigation
         document.addEventListener('DOMContentLoaded', () => {
-            const riskLensBtn = document.getElementById('RiskLensBtn');
-            if (riskLensBtn) {
-                riskLensBtn.addEventListener('click', () => {
-                    const dashboardUrl = 'RiskLens_dashboard.html'; 
-                    window.location.href = dashboardUrl;
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tab = button.getAttribute('data-tab');
+                    if (tab === 'risk-lens') {
+                        window.location.href = 'RiskLens_dashboard.html';
+                    }
+                    // IDP tab is already active, no action needed
                 });
-            }
+            });
         });
     </script>
 </body>
